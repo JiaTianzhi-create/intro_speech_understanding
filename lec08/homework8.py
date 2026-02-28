@@ -13,7 +13,12 @@ def waveform_to_frames(waveform, frame_length, step):
     frames (np.ndarray((num_frames, frame_length))) - waveform chopped into frames
        frames[m/step,n] = waveform[m+n] only for m = integer multiple of step
     '''
-    raise RuntimeError("You need to change this part")
+    num_frames = (len(waveform) - frame_length) // step + 1
+    frames = np.zeros((num_frames, frame_length))
+    for i in range(num_frames):
+        start = i * step
+        frames[i] = waveform[start:start + frame_length]
+    return frames
 
 def frames_to_mstft(frames):
     '''
@@ -25,7 +30,8 @@ def frames_to_mstft(frames):
     @returns:
     mstft (np.ndarray((num_frames, frame_length))) - the magnitude short-time Fourier transform
     '''
-    raise RuntimeError("You need to change this part")
+    mstft = np.abs(np.fft.fft(frames, axis=1))
+    return mstft
 
 def mstft_to_spectrogram(mstft):
     '''
@@ -40,6 +46,7 @@ def mstft_to_spectrogram(mstft):
     The spectrogram should be expressed in decibels (20*log10(mstft)).
     np.amin(spectrogram) should be no smaller than np.amax(spectrogram)-60
     '''
-    raise RuntimeError("You need to change this part")
-
-
+    max_val = np.amax(mstft)
+    clipped_mstft = np.maximum(0.001 * max_val, mstft)
+    spectrogram = 20 * np.log10(clipped_mstft)
+    return spectrogram
